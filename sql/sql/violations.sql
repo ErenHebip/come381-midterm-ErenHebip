@@ -67,11 +67,13 @@ INSERT INTO class_registration (member_id, class_id, registration_date)
 VALUES (9999, 1, '2026-10-21');
 ROLLBACK;
 
--- T08 | fk_registration_member | Beklenen: 23503
--- Mevcut uyeyi silmek, ona bagli kayit nedeniyle engellenir.
+
+-- T08 | fk_member_plan | Beklenen: 23503
+-- Uyesi bulunan bir uyelik plani silinemez.
 BEGIN;
-DELETE FROM member WHERE member_id = 1;
+DELETE FROM membership_plan WHERE plan_id = 1;
 ROLLBACK;
+
 
 -- T09 | fk_registration_class | Beklenen: 23503
 BEGIN;
