@@ -62,22 +62,31 @@ ALTER TABLE fitness_class DROP CONSTRAINT fitness_class_trainer_id_fkey;
 ALTER TABLE class_registration DROP CONSTRAINT class_registration_member_id_fkey;
 ALTER TABLE class_registration DROP CONSTRAINT class_registration_class_id_fkey;
 
--- Üyenin planı mevcut bir üyelik planına bağlı olmalıdır.
+
+-- Bir plana bağlı üyeler varsa plan silinemez.
 ALTER TABLE member
     ADD CONSTRAINT fk_member_plan
-    FOREIGN KEY (plan_id) REFERENCES membership_plan(plan_id);
+    FOREIGN KEY (plan_id)
+    REFERENCES membership_plan(plan_id)
+    ON DELETE RESTRICT;
 
--- Her grup dersi mevcut bir antrenöre bağlı olmalıdır.
+-- Bir antrenörün dersleri varsa antrenör silinemez.
 ALTER TABLE fitness_class
     ADD CONSTRAINT fk_fitness_class_trainer
-    FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id);
+    FOREIGN KEY (trainer_id)
+    REFERENCES trainer(trainer_id)
+    ON DELETE RESTRICT;
 
--- Ders kaydı mevcut bir üyeye ait olmalıdır.
+-- Üye silinirse ders kayıtları da silinir.
 ALTER TABLE class_registration
     ADD CONSTRAINT fk_registration_member
-    FOREIGN KEY (member_id) REFERENCES member(member_id);
+    FOREIGN KEY (member_id)
+    REFERENCES member(member_id)
+    ON DELETE CASCADE;
 
--- Ders kaydı mevcut bir grup dersine ait olmalıdır.
+-- Ders silinirse o derse ait kayıtlar da silinir.
 ALTER TABLE class_registration
     ADD CONSTRAINT fk_registration_class
-    FOREIGN KEY (class_id) REFERENCES fitness_class(class_id);
+    FOREIGN KEY (class_id)
+    REFERENCES fitness_class(class_id)
+    ON DELETE CASCADE;
