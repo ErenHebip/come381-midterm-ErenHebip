@@ -1,0 +1,64 @@
+\set VERBOSITY verbose
+
+-- Transaction başlat
+BEGIN;
+BEGIN
+
+-- Güncelleme öncesi fiyatlar
+SELECT product_id, name, price
+FROM product
+WHERE category = 'Sıcak İçecek'
+ORDER BY product_id;
+ product_id |     name     | price 
+------------+--------------+-------
+          1 | Çay          | 20.00
+          2 | Türk Kahvesi | 35.00
+          3 | Latte        | 60.00
+(3 sat�r)
+
+
+-- Sıcak içeceklerin fiyatını 5 TL artır
+UPDATE product
+SET price = price + 5
+WHERE category = 'Sıcak İçecek';
+UPDATE 3
+
+-- Güncelleme sonrası fiyatlar
+SELECT product_id, name, price
+FROM product
+WHERE category = 'Sıcak İçecek'
+ORDER BY product_id;
+ product_id |     name     | price 
+------------+--------------+-------
+          1 | Çay          | 25.00
+          2 | Türk Kahvesi | 40.00
+          3 | Latte        | 65.00
+(3 sat�r)
+
+
+-- Bilerek yabancı anahtar hatası oluştur
+INSERT INTO order_item (order_id, product_id, quantity)
+VALUES (1, 999, 1);
+psql:dml.sql:25: ERROR:  23503: insert or update on table "order_item" violates foreign key constraint "order_item_product_id_fkey"
+AYRINTI:  Key (product_id)=(999) is not present in table "product".
+�EMA ADI:  public
+TABLO ADI:  order_item
+KISITLAMA ADI:  order_item_product_id_fkey
+YER:  ri_ReportViolation, ri_triggers.c:2837
+
+-- İşlemleri geri al
+ROLLBACK;
+ROLLBACK
+
+-- Geri alma sonrası fiyatları kontrol et
+SELECT product_id, name, price
+FROM product
+WHERE category = 'Sıcak İçecek'
+ORDER BY product_id;
+ product_id |     name     | price 
+------------+--------------+-------
+          1 | Çay          | 20.00
+          2 | Türk Kahvesi | 35.00
+          3 | Latte        | 60.00
+(3 sat�r)
+
